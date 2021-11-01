@@ -5,6 +5,9 @@ const frontendUrl =
 const backendUrl =
   'https://api.github.com/repos/laurenpuskas/mammoth-backend/issues?state=all';
 
+const authLabel = 'authentication';
+const paymentLabel = 'payments';
+
 const headers = {
   headers: {
     Accept: 'application/vnd.github.v3+json',
@@ -16,8 +19,9 @@ const headers = {
  */
 
 function App() {
-  // manage state for issues
+  // manage state for issues & potential errors
   const [issues, setIssues] = useState([]);
+  const [errors, setErrors] = useState(null);
 
   // fetch all issues
   useEffect(() => {
@@ -32,23 +36,44 @@ function App() {
           }),
         ]);
         const allData = [...frontendData, ...backendData];
-        console.log(allData);
         setIssues(allData);
       } catch (err) {
-        console.log(err);
+        setErrors(err);
       }
     }
 
     fetchIssues();
   }, []);
 
+  // filter function
+  function issueFilter(issues, label) {
+    const filterArr = issues.filter((issue) => issue.labels[0].name === label);
+    return filterArr;
+  }
+
+  // filter for ALL open issues
+  const openIssues = issues.filter((issue) => issue.state === 'open');
+
+  // filter for ALL & OPEN issues with "authentication" epic
+  const authIssuesTotal = issueFilter(issues, authLabel);
+  const authIssuesOpen = issueFilter(openIssues, authLabel);
+
+  // filter for ALL & OPEN issues with "payments" epic
+  const paymentsIssuesTotal = issueFilter(issues, paymentLabel);
+  const paymentsIssuesOpen = issueFilter(openIssues, paymentLabel);
+
   if (!issues.length) return <div>No issues found.</div>;
 
   return (
     <>
-      {issues.map((issue, index) => {
-        return <div key={index}>{issue.url}</div>;
-      })}
+      {authLabel} issues OPEN: {authIssuesOpen.length}
+      <br />
+      {authLabel} issues TOTAL: {authIssuesTotal.length}
+      <hr />
+      {paymentLabel} issues OPEN: {paymentsIssuesOpen.length}
+      <br />
+      {paymentLabel} issues TOTAL: {paymentsIssuesTotal.length}
+      {errors && <div>{errors}</div>}
     </>
   );
 }
