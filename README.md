@@ -1,6 +1,6 @@
 # Mammoth Finance Take-Home Project
 
-Running application: https://mammoth-finance.netlify.com/
+Running application: https://mammoth-finance.netlify.app
 
 This is an example application that retrieves Github issues data from the [Mammoth Frontend](https://github.com/laurenpuskas/mammoth-frontend) and [Mammoth Backend](https://github.com/laurenpuskas/mammoth-backend) repositories.
 
