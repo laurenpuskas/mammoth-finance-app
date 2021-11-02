@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
+import Layout from './components/Layout';
+import Table from './components/Table';
+import './App.scss';
+
 const frontendUrl =
   'https://api.github.com/repos/laurenpuskas/mammoth-frontend/issues?state=all';
 const backendUrl =
   'https://api.github.com/repos/laurenpuskas/mammoth-backend/issues?state=all';
 
 const authLabel = 'authentication';
-const paymentLabel = 'payments';
+const paymentsLabel = 'payments';
 
 const headers = {
   headers: {
@@ -45,7 +49,7 @@ function App() {
     fetchIssues();
   }, []);
 
-  // filter function
+  // filter function for epics
   function issueFilter(issues, label) {
     const filterArr = issues.filter((issue) => issue.labels[0].name === label);
     return filterArr;
@@ -59,22 +63,30 @@ function App() {
   const authIssuesOpen = issueFilter(openIssues, authLabel);
 
   // filter for ALL & OPEN issues with "payments" epic
-  const paymentsIssuesTotal = issueFilter(issues, paymentLabel);
-  const paymentsIssuesOpen = issueFilter(openIssues, paymentLabel);
+  const paymentsIssuesTotal = issueFilter(issues, paymentsLabel);
+  const paymentsIssuesOpen = issueFilter(openIssues, paymentsLabel);
 
-  if (!issues.length) return <div>No issues found.</div>;
+  if (!issues.length)
+    return (
+      <Layout>
+        <h2 className="center">No data found.</h2>
+      </Layout>
+    );
 
   return (
-    <>
-      {authLabel} issues OPEN: {authIssuesOpen.length}
-      <br />
-      {authLabel} issues TOTAL: {authIssuesTotal.length}
-      <hr />
-      {paymentLabel} issues OPEN: {paymentsIssuesOpen.length}
-      <br />
-      {paymentLabel} issues TOTAL: {paymentsIssuesTotal.length}
-      {errors && <div>{errors}</div>}
-    </>
+    <Layout>
+      <Table
+        {...{
+          authLabel,
+          paymentsLabel,
+          authIssuesOpen,
+          authIssuesTotal,
+          paymentsIssuesOpen,
+          paymentsIssuesTotal,
+        }}
+      />
+      {errors && <h2 className="center">{errors}</h2>}
+    </Layout>
   );
 }
 
